@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spin Lab: How a Merry-Go-Round Works</title>
+  <meta name="description" content="An interactive, step-by-step animated guide to the mechanics and physics of a merry-go-round (carousel): motors, gears, cranks, and centripetal force." />
+  <meta name="theme-color" content="#2a0b5e" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Spin Lab home">
+      <span class="brand-icon" aria-hidden="true">🎠</span>
+      <span>Spin<span class="accent">Lab</span></span>
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">☰</button>
+    <nav id="site-nav" class="site-nav">
+      <a href="#animation">Animation</a>
+      <a href="#anatomy">Parts</a>
+      <a href="#physics">Physics Lab</a>
+      <a href="#gears">Gear Lab</a>
+      <a href="#quiz">Quiz</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="bulbs" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <p class="eyebrow">Interactive mechanics lesson</p>
+        <h1>How does a <span class="rainbow">merry-go-round</span> really work?</h1>
+        <p class="lede">
+          Behind the music and painted horses hides a clever machine: a motor, a chain of gears,
+          and spinning cranks that turn one simple rotation into a galloping ride.
+          Step through it piece by piece, then experiment with the physics yourself.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#animation">▶ Start the step-by-step tour</a>
+          <a class="btn btn-ghost" href="#physics">Jump to the Physics Lab</a>
+        </div>
+        <ul class="hero-stats">
+          <li><strong>9</strong><span>animated steps</span></li>
+          <li><strong>12</strong><span>machine parts</span></li>
+          <li><strong>2</strong><span>hands-on labs</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP-BY-STEP ANIMATION -->
+    <section id="animation" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Step-by-step</p>
+        <h2>Watch the machine come to life</h2>
+        <p>Use <kbd>←</kbd> <kbd>→</kbd> or the buttons to move through each stage. Glowing callouts show the part in action.</p>
+      </div>
+
+      <div class="stage-layout">
+        <div class="stage-card">
+          <canvas id="carousel-canvas" style="aspect-ratio: 960 / 620" role="img"
+            aria-label="Animated cutaway of a merry-go-round showing the motor, gears, platform, cranks and horses"></canvas>
+
+          <div class="controls" role="group" aria-label="Animation controls">
+            <button class="btn btn-round" id="btn-prev" aria-label="Previous step"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="4" y="5" width="3" height="14" rx="1" fill="currentColor"/><path d="M20 5.5v13a1 1 0 0 1-1.55.83L9 13a1.2 1.2 0 0 1 0-2l9.45-6.33A1 1 0 0 1 20 5.5z" fill="currentColor"/></svg></button>
+            <button class="btn btn-round btn-play" id="btn-play" aria-label="Pause animation"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1.5" fill="currentColor"/><rect x="14" y="4" width="5" height="16" rx="1.5" fill="currentColor"/></svg></button>
+            <button class="btn btn-round" id="btn-next" aria-label="Next step"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="17" y="5" width="3" height="14" rx="1" fill="currentColor"/><path d="M4 5.5v13a1 1 0 0 0 1.55.83L15 13a1.2 1.2 0 0 0 0-2L5.55 4.67A1 1 0 0 0 4 5.5z" fill="currentColor"/></svg></button>
+            <button class="btn btn-chip" id="btn-tour" aria-pressed="false">✨ Auto-tour</button>
+            <label class="control-inline">
+              Speed
+              <input type="range" id="speed" min="0.25" max="3" step="0.25" value="1" />
+              <output id="speed-out">1×</output>
+            </label>
+            <label class="toggle"><input type="checkbox" id="toggle-labels" checked /> Labels</label>
+            <label class="toggle"><input type="checkbox" id="toggle-xray" /> X-ray canopy</label>
+          </div>
+          <div class="tour-progress" aria-hidden="true"><span id="tour-bar"></span></div>
+
+          <div class="readouts" aria-live="off">
+            <div class="readout r-pink"><span>Motor</span><strong id="ro-motor">0</strong><em>RPM</em></div>
+            <div class="readout r-purple"><span>Platform</span><strong id="ro-platform">0.0</strong><em>RPM</em></div>
+            <div class="readout r-teal"><span>Outer horse</span><strong id="ro-outer">0.0</strong><em>km/h</em></div>
+            <div class="readout r-yellow"><span>Inner horse</span><strong id="ro-inner">0.0</strong><em>km/h</em></div>
+            <div class="readout r-orange"><span>Gallops</span><strong id="ro-bobs">0</strong><em>per min</em></div>
+          </div>
+        </div>
+
+        <aside class="step-panel" aria-live="polite">
+          <ol class="step-dots" id="step-dots" aria-label="Steps"></ol>
+          <div class="step-body">
+            <p class="step-count" id="step-count">Step 1 of 9</p>
+            <h3 id="step-title">Meet the machine</h3>
+            <div id="step-text" class="step-text"></div>
+            <div id="step-formula" class="formula"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ANATOMY -->
+    <section id="anatomy" class="section section-alt">
+      <div class="section-head">
+        <p class="eyebrow">Anatomy</p>
+        <h2>Meet the parts</h2>
+        <p>Every part has one job. Tap <strong>“See it move”</strong> to jump to that part in the animation.</p>
+      </div>
+      <div class="part-grid" id="part-grid"></div>
+    </section>
+
+    <!-- PHYSICS LAB -->
+    <section id="physics" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Physics Lab</p>
+        <h2>Spin it yourself</h2>
+        <p>Everyone on the platform turns at the <em>same angular speed</em>, but riders farther from the center travel a bigger circle, so they move faster and need more force to stay on course.</p>
+      </div>
+      <div class="lab-layout">
+        <div class="lab-card">
+          <canvas id="physics-canvas" style="aspect-ratio: 1 / 1" role="img"
+            aria-label="Top-down view of a spinning platform with a rider, a velocity arrow and a centripetal force arrow"></canvas>
+          <div class="legend">
+            <span><i class="sw sw-teal"></i> Velocity (v)</span>
+            <span><i class="sw sw-pink"></i> Centripetal force (F<sub>c</sub>)</span>
+          </div>
+        </div>
+        <div class="lab-panel">
+          <label class="slider">
+            <span>Platform speed <output id="pl-rpm-out">6 RPM</output></span>
+            <input type="range" id="pl-rpm" min="1" max="15" step="0.5" value="6" />
+          </label>
+          <label class="slider">
+            <span>Rider distance from center <output id="pl-r-out">7.0 m</output></span>
+            <input type="range" id="pl-r" min="0.5" max="9" step="0.1" value="7" />
+          </label>
+          <label class="slider">
+            <span>Rider mass <output id="pl-m-out">40 kg</output></span>
+            <input type="range" id="pl-m" min="15" max="120" step="1" value="40" />
+          </label>
+
+          <div class="stat-grid">
+            <div class="stat"><span>Angular speed ω</span><strong id="pl-omega">—</strong></div>
+            <div class="stat"><span>Time per lap T</span><strong id="pl-period">—</strong></div>
+            <div class="stat"><span>Rider speed v = ωr</span><strong id="pl-v">—</strong></div>
+            <div class="stat"><span>Centripetal accel. a = ω²r</span><strong id="pl-a">—</strong></div>
+            <div class="stat"><span>Force needed F = m·a</span><strong id="pl-f">—</strong></div>
+            <div class="stat"><span>Feels like</span><strong id="pl-g">—</strong></div>
+          </div>
+
+          <div class="meter" aria-hidden="true"><span id="pl-meter"></span></div>
+          <p class="meter-caption" id="pl-comfort">Comfortable</p>
+
+          <button class="btn btn-primary btn-block" id="pl-letgo">🚀 Let go of the pole!</button>
+          <p class="hint">Watch the path: with nothing pulling inward, the rider keeps going in a <strong>straight line</strong> along the direction they were moving. That is Newton's first law, inertia.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GEAR LAB -->
+    <section id="gears" class="section section-alt">
+      <div class="section-head">
+        <p class="eyebrow">Gear Lab</p>
+        <h2>Why do the horses gallop?</h2>
+        <p>Imagine cutting the stationary <strong>crown gear</strong> at the top of the center pole and laying it out flat. As the ride turns, each crank's little pinion gear rolls along it, so the crank spins and lifts the horse up and down.</p>
+      </div>
+      <div class="lab-card wide">
+        <canvas id="gear-canvas" style="aspect-ratio: 960 / 340" role="img"
+          aria-label="A pinion gear rolling along an unrolled crown gear, turning a crank that moves a horse up and down"></canvas>
+      </div>
+      <div class="gear-controls">
+        <label class="slider">
+          <span>Crown gear teeth <output id="gl-crown-out">36</output></span>
+          <input type="range" id="gl-crown" min="24" max="72" step="4" value="36" />
+        </label>
+        <label class="slider">
+          <span>Crank pinion teeth <output id="gl-pinion-out">12</output></span>
+          <input type="range" id="gl-pinion" min="8" max="24" step="2" value="12" />
+        </label>
+        <div class="ratio-card">
+          <span>Gallops per lap</span>
+          <strong id="gl-ratio">3</strong>
+          <em id="gl-ratio-eq">36 ÷ 12 = 3</em>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Check yourself</p>
+        <h2>Merry-go-round quiz</h2>
+        <p>Seven quick questions. Each answer comes with an explanation.</p>
+      </div>
+      <div class="quiz" id="quiz-root"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>🎠 Spin Lab: a hands-on look at carousel mechanics.</p>
+    <p class="small">The animation is a simplified teaching model. Real carousels vary: some drive the platform from below, others from the top of the center pole.</p>
+  </footer>
+
+  <script src="js/util.js" defer></script>
+  <script src="js/horse.js" defer></script>
+  <script src="js/carousel.js" defer></script>
+  <script src="js/physics-lab.js" defer></script>
+  <script src="js/gear-lab.js" defer></script>
+  <script src="js/quiz.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>
